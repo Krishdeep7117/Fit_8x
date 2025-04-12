@@ -1,0 +1,3329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fit_8x - Personal Training Software</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(145deg, #2c3e50 0%, #1a252f 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.1;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .container:hover::before {
+            opacity: 0.15;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ecf0f1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 5px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: translateY(-2px);
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #bdc3c7;
+            font-weight: 500;
+            position: relative;
+            padding: 8px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-links a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .nav-links a::after {
+            content: '▼';
+            font-size: 10px;
+            margin-left: 5px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+            opacity: 0.7;
+        }
+        
+        .nav-links a:hover::after {
+            transform: translateY(2px);
+            opacity: 1;
+        }
+        
+        .nav-links a:last-child::after {
+            display: none;
+        }
+        
+        .cta-button {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 13px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .cta-button:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+            color: white;
+        }
+        
+        .cta-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+        }
+        
+        /* Add responsive styles for header */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 0;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .nav-links a {
+                font-size: 13px;
+                padding: 6px 0;
+            }
+            
+            .cta-button {
+                padding: 8px 20px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.95) 0%, rgba(26, 37, 47, 0.95) 100%);
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.1;
+            z-index: -1;
+            animation: pulse 4s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.15; }
+            100% { opacity: 0.1; }
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: slideDown 1s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .hero h2 {
+            font-size: 28px;
+            color: #bdc3c7;
+            font-weight: normal;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            animation: slideUp 1s ease-out 0.3s both;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .hero p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #bdc3c7;
+            line-height: 1.8;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .email-form {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: scaleIn 0.5s ease-out 0.9s both;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .email-form input {
+            padding: 15px 25px;
+            width: 350px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ecf0f1;
+            transition: all 0.3s ease;
+        }
+        
+        .email-form input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .email-form input::placeholder {
+            color: #95a5a6;
+        }
+        
+        .email-form button {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .email-form button:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .email-form button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+        }
+        
+        .trial-text {
+            font-size: 14px;
+            color: #95a5a6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-out 1.2s both;
+        }
+        
+        /* Workout Section */
+        .workout-section {
+            background: linear-gradient(145deg, #1a1f25 0%, #2c3e50 100%);
+            margin: 30px auto;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .workout-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            opacity: 0.8;
+        }
+        
+        .workout-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            opacity: 0.1;
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+            transition: all 0.3s ease;
+        }
+        
+        /* Day 1-10: Foundation & Form */
+        .workout-section:nth-child(1)::after {
+            background: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 11-20: Strength Building */
+        .workout-section:nth-child(2)::after {
+            background: url('https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 21-30: HIIT & Cardio */
+        .workout-section:nth-child(3)::after {
+            background: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 31-40: Core & Stability */
+        .workout-section:nth-child(4)::after {
+            background: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 41-50: Power & Explosiveness */
+        .workout-section:nth-child(5)::after {
+            background: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 51-60: Mobility & Flexibility */
+        .workout-section:nth-child(6)::after {
+            background: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 61-70: Endurance Building */
+        .workout-section:nth-child(7)::after {
+            background: url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 71-80: Advanced Strength */
+        .workout-section:nth-child(8)::after {
+            background: url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 81-90: Athletic Performance */
+        .workout-section:nth-child(9)::after {
+            background: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        /* Day 91-100: Peak Performance */
+        .workout-section:nth-child(10)::after {
+            background: url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        }
+        
+        .workout-section:hover::after {
+            transform: translate(40%, -40%) scale(1.1);
+            opacity: 0.15;
+        }
+        
+        .workout-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .workout-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .workout-section:hover .workout-title::after {
+            width: 100px;
+        }
+        
+        .workout-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #bdc3c7;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .workout-meta span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .workout-meta span:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .workout-meta .video {
+            color: #3498db;
+            font-weight: bold;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .workout-meta .video::before {
+            content: '▶';
+            position: absolute;
+            left: 10px;
+            font-size: 12px;
+            animation: pulse 2s infinite;
+        }
+        
+        .complete-button {
+            background: linear-gradient(145deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 13px;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2);
+        }
+        
+        .complete-button:hover {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+        }
+        
+        .complete-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(46, 204, 113, 0.2);
+        }
+        
+        .complete-button:disabled {
+            background: #95a5a6;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        .workout-duration {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #3498db;
+        }
+        
+        .workout-duration::before {
+            content: '⏱';
+            font-size: 16px;
+            animation: rotate 2s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .workout-instructions {
+            margin-top: 25px;
+            color: #ecf0f1;
+            line-height: 1.8;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .workout-instructions:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .workout-instructions p:first-child {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .see-more {
+            color: #3498db;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 8px 20px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .see-more::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(52, 152, 219, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+        
+        .see-more:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .see-more:hover::before {
+            left: 100%;
+        }
+        
+        /* Add responsive styles for workout sections */
+        @media (max-width: 768px) {
+            .workout-section {
+                padding: 25px;
+                margin: 20px auto;
+            }
+            
+            .workout-meta {
+                gap: 10px;
+            }
+            
+            .workout-meta span {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            
+            .workout-title {
+                font-size: 20px;
+            }
+            
+            .email-form {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .email-form input {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .email-form {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .email-form input {
+                width: 100%;
+            }
+        }
+        
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: linear-gradient(145deg, #2c3e50 0%, #1a252f 100%);
+            min-width: 280px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 20px 0;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-content .category {
+            padding: 0 20px;
+            margin-bottom: 15px;
+        }
+        
+        .dropdown-content .category-title {
+            color: #3498db;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .dropdown-content .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+        
+        .dropdown-content .menu-item:hover {
+            color: #3498db;
+            transform: translateX(5px);
+        }
+        
+        .dropdown-content .menu-item .icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .dropdown-content .menu-item .description {
+            font-size: 11px;
+            color: #95a5a6;
+            margin-top: 2px;
+        }
+        
+        .dropdown-content .featured {
+            background: rgba(52, 152, 219, 0.1);
+            margin: 15px 20px;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .dropdown-content .featured h4 {
+            color: #3498db;
+            font-size: 13px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .dropdown-content .featured p {
+            color: #bdc3c7;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        
+        .dropdown-content .featured .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 4px;
+            font-size: 10px;
+            color: #3498db;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .dropdown-content a {
+            color: #bdc3c7;
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+        
+        .dropdown-content a:hover {
+            color: #3498db;
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 25px;
+        }
+        
+        .dropdown-content a::before {
+            content: '→';
+            position: absolute;
+            left: 15px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-content a:hover::before {
+            opacity: 1;
+            left: 20px;
+        }
+        
+        .dropdown-content .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 10px 0;
+        }
+        
+        .dropdown-content .featured {
+            background: rgba(52, 152, 219, 0.1);
+            margin: 5px 15px;
+            border-radius: 6px;
+            padding: 10px 15px;
+        }
+        
+        .dropdown-content .featured h4 {
+            color: #3498db;
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .dropdown-content .featured p {
+            color: #bdc3c7;
+            font-size: 11px;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Add Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #2c3e50 0%, #1a252f 100%);
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 15px;
+            position: relative;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #bdc3c7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .close-modal:hover {
+            color: #3498db;
+            transform: rotate(90deg);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .signup-form h2 {
+            color: #ecf0f1;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .signup-form p {
+            color: #bdc3c7;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #ecf0f1;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #95a5a6;
+        }
+
+        .signup-form button {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 15px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .signup-form button:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .signup-form button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .terms {
+            color: #95a5a6;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .terms a {
+            color: #3498db;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .terms a:hover {
+            color: #2ecc71;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 30px 20px;
+            }
+
+            .signup-form h2 {
+                font-size: 24px;
+            }
+        }
+
+        /* Diet Section Styles */
+        .diet-section {
+            background: linear-gradient(145deg, #1a1f25 0%, #2c3e50 100%);
+            margin: 30px auto;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .diet-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .diet-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .diet-title:hover::after {
+            width: 100px;
+        }
+
+        .weight-input {
+            margin-bottom: 30px;
+        }
+
+        .weight-input input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #ecf0f1;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .weight-input button {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .diet-category {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .diet-category h4 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .diet-category p {
+            color: #ecf0f1;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .diet-category ul {
+            color: #ecf0f1;
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+
+        /* Add Timer Styles */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            color: #3498db;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .timer-button {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .timer-button:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .timer-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .timer-button.stop {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+
+        .timer-button.stop:hover {
+            background: linear-gradient(145deg, #c0392b, #e74c3c);
+        }
+
+        .timer-button.reset {
+            background: linear-gradient(145deg, #95a5a6, #7f8c8d);
+        }
+
+        .timer-button.reset:hover {
+            background: linear-gradient(145deg, #7f8c8d, #95a5a6);
+        }
+
+        .exercise-details {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        .exercise-set {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-set:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateX(5px);
+        }
+
+        .set-timer-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 6px;
+        }
+
+        .set-timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            color: #3498db;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .set-timer-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .set-timer-button {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 11px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .set-timer-button:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .set-timer-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .set-timer-button.stop {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+
+        .set-timer-button.stop:hover {
+            background: linear-gradient(145deg, #c0392b, #e74c3c);
+        }
+
+        .set-timer-button.reset {
+            background: linear-gradient(145deg, #95a5a6, #7f8c8d);
+        }
+
+        .set-timer-button.reset:hover {
+            background: linear-gradient(145deg, #7f8c8d, #95a5a6);
+        }
+
+        /* Add background image for Foundation & Form section */
+        #day1-10::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            border-radius: 15px;
+        }
+
+        /* Floating Timer Panel Styles */
+        .floating-timer-panel {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(145deg, #1a1f25, #2c3e50);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 250px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .floating-timer-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .floating-timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .floating-timer-title {
+            color: #3498db;
+            font-weight: bold;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .floating-timer-minimize {
+            background: none;
+            border: none;
+            color: #95a5a6;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .floating-timer-minimize:hover {
+            color: #3498db;
+        }
+
+        .floating-timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 32px;
+            color: #3498db;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            text-align: center;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .floating-timer-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .floating-timer-button {
+            flex: 1;
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .floating-timer-button:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .floating-timer-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .floating-timer-button.stop {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+
+        .floating-timer-button.stop:hover {
+            background: linear-gradient(145deg, #c0392b, #e74c3c);
+        }
+
+        .floating-timer-button.reset {
+            background: linear-gradient(145deg, #95a5a6, #7f8c8d);
+        }
+
+        .floating-timer-button.reset:hover {
+            background: linear-gradient(145deg, #7f8c8d, #95a5a6);
+        }
+
+        .floating-timer-minimized {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .floating-timer-minimized .floating-timer-display {
+            font-size: 16px;
+            margin: 0;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .floating-timer-minimized .floating-timer-header,
+        .floating-timer-minimized .floating-timer-controls {
+            display: none;
+        }
+
+        /* Workout Builder Modal Styles */
+        .workout-builder-modal {
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            max-height: 800px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .workout-builder-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            border-radius: 10px;
+            background: rgba(26, 31, 37, 0.8);
+            margin-top: 20px;
+        }
+
+        .workout-builder-sidebar {
+            width: 300px;
+            background: linear-gradient(145deg, #1a1f25, #2c3e50);
+            padding: 20px;
+            border-right: 1px solid rgba(52, 152, 219, 0.3);
+            overflow-y: auto;
+        }
+
+        .workout-builder-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .exercise-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .category-btn {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .category-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .search-container {
+            margin-bottom: 15px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .exercise-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-item:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateX(5px);
+        }
+
+        .exercise-item h4 {
+            color: #3498db;
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
+
+        .exercise-item p {
+            color: #95a5a6;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .workout-name-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .workout-meta-inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .workout-meta-inputs select {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .workout-sets-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .workout-set {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .set-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .set-title {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .set-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .set-action-btn {
+            background: none;
+            border: none;
+            color: #95a5a6;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .set-action-btn:hover {
+            color: #3498db;
+        }
+
+        .exercise-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .exercise-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .exercise-details {
+            flex: 1;
+        }
+
+        .exercise-name {
+            color: #2ecc71;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .exercise-params {
+            display: flex;
+            gap: 15px;
+        }
+
+        .exercise-param {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .exercise-param input {
+            width: 50px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .remove-exercise-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .remove-exercise-btn:hover {
+            color: #c0392b;
+        }
+
+        .add-exercise-btn {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .add-exercise-btn:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+        }
+
+        .add-set-btn {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .add-set-btn:hover {
+            background: linear-gradient(145deg, #27ae60, #2ecc71);
+            transform: translateY(-2px);
+        }
+
+        .workout-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .save-workout-btn, .export-workout-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .save-workout-btn {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .save-workout-btn:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+        }
+
+        .export-workout-btn {
+            background: linear-gradient(145deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .export-workout-btn:hover {
+            background: linear-gradient(145deg, #e67e22, #f39c12);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">fit_8x</div>
+            <nav class="nav-links">
+                <div class="dropdown">
+                <a href="#">BUSINESS TYPES</a>
+                    <div class="dropdown-content">
+                        <div class="category">
+                            <div class="category-title">Professional Trainers</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">👤</span>
+                                <div>
+                                    <div>Personal Trainers</div>
+                                    <div class="description">One-on-one training and client management</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">👥</span>
+                                <div>
+                                    <div>Group Trainers</div>
+                                    <div class="description">Class and group session management</div>
+                                </div>
+                            </a>
+                            <a href="#" id="workoutBuilderBtn" class="menu-item">
+                                <span class="icon">💪</span>
+                                <div>
+                                    <div>Workout Builder</div>
+                                    <div class="description">Create custom workout plans</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="category">
+                            <div class="category-title">Business Owners</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🏢</span>
+                                <div>
+                                    <div>Gym Owners</div>
+                                    <div class="description">Complete gym management solution</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🎯</span>
+                                <div>
+                                    <div>Fitness Studios</div>
+                                    <div class="description">Specialized studio management</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="featured">
+                            <h4>New Feature</h4>
+                            <p>AI-powered workout customization for personal trainers</p>
+                            <span class="tag">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown">
+                <a href="#">PRICING</a>
+                    <div class="dropdown-content">
+                        <div class="category">
+                            <div class="category-title">Individual Plans</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🌟</span>
+                                <div>
+                                    <div>Starter Plan</div>
+                                    <div class="description">Perfect for new trainers</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">💫</span>
+                                <div>
+                                    <div>Professional Plan</div>
+                                    <div class="description">For growing businesses</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="category">
+                            <div class="category-title">Business Plans</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🏢</span>
+                                <div>
+                                    <div>Business Plan</div>
+                                    <div class="description">Complete business solution</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🌐</span>
+                                <div>
+                                    <div>Enterprise Plan</div>
+                                    <div class="description">Custom solutions for large organizations</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="featured">
+                            <h4>Special Offer</h4>
+                            <p>Get 30% off on annual subscriptions</p>
+                            <span class="tag">Limited Time</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown">
+                <a href="#">FEATURES</a>
+                    <div class="dropdown-content">
+                        <div class="category">
+                            <div class="category-title">Training Tools</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">📝</span>
+                                <div>
+                                    <div>Workout Builder</div>
+                                    <div class="description">Create custom workout plans</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🍎</span>
+                                <div>
+                                    <div>Nutrition Tracking</div>
+                                    <div class="description">Meal planning and tracking</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="category">
+                            <div class="category-title">Analytics</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">📊</span>
+                                <div>
+                                    <div>Progress Analytics</div>
+                                    <div class="description">Track client progress</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">👥</span>
+                                <div>
+                                    <div>Client Management</div>
+                                    <div class="description">Manage client relationships</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="featured">
+                            <h4>Coming Soon</h4>
+                            <p>Virtual reality workout experiences</p>
+                            <span class="tag">Beta Access</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown">
+                <a href="#">RESOURCES</a>
+                    <div class="dropdown-content">
+                        <div class="category">
+                            <div class="category-title">Learning</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">📚</span>
+                                <div>
+                                    <div>Blog</div>
+                                    <div class="description">Latest fitness trends and tips</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">📊</span>
+                                <div>
+                                    <div>Case Studies</div>
+                                    <div class="description">Success stories from our clients</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="category">
+                            <div class="category-title">Support</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🎥</span>
+                                <div>
+                                    <div>Webinars</div>
+                                    <div class="description">Live training sessions</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">📖</span>
+                                <div>
+                                    <div>Documentation</div>
+                                    <div class="description">Detailed guides and tutorials</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="featured">
+                            <h4>Latest Update</h4>
+                            <p>New fitness industry trends report</p>
+                            <span class="tag">New</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown">
+                <a href="#">ACADEMY</a>
+                    <div class="dropdown-content">
+                        <div class="category">
+                            <div class="category-title">Courses</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🎓</span>
+                                <div>
+                                    <div>Certification Courses</div>
+                                    <div class="description">Professional certifications</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">📅</span>
+                                <div>
+                                    <div>Workshop Schedule</div>
+                                    <div class="description">Upcoming workshops and events</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="category">
+                            <div class="category-title">Expert Content</div>
+                            <a href="#" class="menu-item">
+                                <span class="icon">👨‍🏫</span>
+                                <div>
+                                    <div>Expert Sessions</div>
+                                    <div class="description">Learn from industry experts</div>
+                                </div>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <span class="icon">🎯</span>
+                                <div>
+                                    <div>Learning Path</div>
+                                    <div class="description">Structured learning journey</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="featured">
+                            <h4>Featured Course</h4>
+                            <p>Advanced client transformation strategies</p>
+                            <span class="tag">Popular</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="#" class="cta-button">Get started</a>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>gateway to a healthier life</h1>
+            <h2>The #1 fitnees webapp</h2>
+            <p>"Wellness is the complete integration of body, mind, and spirit—the realization that everything we do, think, feel, and believe has an effect on our state of well-being."</p>
+            
+            <div class="email-form">
+                <input type="email" placeholder="Enter your email">
+                <button>Get started</button>
+            </div>
+            
+            <p class="trial-text">Start your trial and enjoy 30 days free. No credit card required.</p>
+        </div>
+    </section>
+    
+    <section class="workout-section" id="day1-10">
+        <div class="workout-content">
+            <h3 class="workout-title">Day 1-10: Foundation & Form</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 30 minutes</span>
+            </div>
+            <div class="workout-instructions">
+
+                
+                <p>Instructions</p>
+                <p>Focus on perfecting basic movement patterns and building a strong foundation. Each day includes form-focused exercises with proper technique demonstrations. Perfect for beginners or those looking to refine their form.</p>
+            </div>
+            <div class="exercise-details" style="display: none;">
+                <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li class="exercise-set">
+                        <strong style="color: #2ecc71;">Set 1: Bodyweight Basics</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Bodyweight Squats (3 sets × 10 reps)</li>
+                            <li>Push-ups (3 sets × 5-8 reps)</li>
+                            <li>Plank Hold (3 sets × 30 seconds)</li>
+                        </ul>
+                    </li>
+                    <li class="exercise-set">
+                        <strong style="color: #2ecc71;">Set 2: Form Focus</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Wall Slides (3 sets × 10 reps)</li>
+                            <li>Bird Dogs (3 sets × 8 reps each side)</li>
+                            <li>Dead Bug (3 sets × 10 reps each side)</li>
+                        </ul>
+                    </li>
+                    <li class="exercise-set">
+                        <strong style="color: #2ecc71;">Set 3: Mobility</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Cat-Cow Stretch (2 sets × 10 reps)</li>
+                            <li>Thread the Needle (2 sets × 8 reps each side)</li>
+                            <li>Child's Pose (2 sets × 30 seconds)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 11-20: Strength Building</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 45 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Progressive overload training focusing on compound movements. Each session builds upon the previous, gradually increasing weights and intensity while maintaining proper form.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Lower Body</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Barbell Squats (4 sets × 8-10 reps)</li>
+                                <li>Romanian Deadlifts (4 sets × 8-10 reps)</li>
+                                <li>Walking Lunges (3 sets × 12 reps each leg)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Upper Body</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Bench Press (4 sets × 8-10 reps)</li>
+                                <li>Bent-Over Rows (4 sets × 8-10 reps)</li>
+                                <li>Shoulder Press (3 sets × 10-12 reps)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Accessories</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Lat Pulldowns (3 sets × 12-15 reps)</li>
+                                <li>Tricep Pushdowns (3 sets × 12-15 reps)</li>
+                                <li>Bicep Curls (3 sets × 12-15 reps)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 21-30: HIIT & Cardio</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 40 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>High-intensity interval training combining cardio and strength exercises. Each workout alternates between maximum effort and recovery periods to boost endurance and fat burning.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Circuit 1: Cardio Burst</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Sprint Intervals (30s work, 30s rest) × 8 rounds</li>
+                                <li>Jump Rope (45s work, 15s rest) × 6 rounds</li>
+                                <li>Mountain Climbers (30s work, 30s rest) × 6 rounds</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Circuit 2: Strength HIIT</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Burpees (45s work, 15s rest) × 6 rounds</li>
+                                <li>Kettlebell Swings (30s work, 30s rest) × 6 rounds</li>
+                                <li>Box Jumps (30s work, 30s rest) × 6 rounds</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Circuit 3: Core Finisher</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Plank to Downward Dog (30s work, 30s rest) × 4 rounds</li>
+                                <li>Russian Twists (45s work, 15s rest) × 4 rounds</li>
+                                <li>Flutter Kicks (30s work, 30s rest) × 4 rounds</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 31-40: Core & Stability</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 35 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Focus on building core strength and improving stability. Includes planks, balance exercises, and functional movements to enhance overall body control and prevent injury.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Core Foundation</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Plank Variations (3 sets × 45s each)</li>
+                                <li>Dead Bug (3 sets × 12 reps each side)</li>
+                                <li>Bird Dog (3 sets × 10 reps each side)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Stability Work</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Single Leg Balance (3 sets × 30s each leg)</li>
+                                <li>Bosu Ball Squats (3 sets × 12 reps)</li>
+                                <li>Stability Ball Rollouts (3 sets × 10 reps)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Anti-Rotation</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Pallof Press (3 sets × 10 reps each side)</li>
+                                <li>Side Plank (3 sets × 30s each side)</li>
+                                <li>Wood Chops (3 sets × 12 reps each side)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 41-50: Power & Explosiveness</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 45 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Power-focused training incorporating plyometric exercises and explosive movements. Build strength and speed while improving athletic performance.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Plyometrics</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Box Jumps (4 sets × 8 reps)</li>
+                                <li>Depth Jumps (4 sets × 6 reps)</li>
+                                <li>Broad Jumps (4 sets × 6 reps)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Olympic Lifts</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Power Cleans (4 sets × 5 reps)</li>
+                                <li>Hang Snatches (4 sets × 5 reps)</li>
+                                <li>Push Press (4 sets × 6 reps)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Explosive Strength</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Medicine Ball Slams (3 sets × 10 reps)</li>
+                                <li>Kettlebell Swings (3 sets × 15 reps)</li>
+                                <li>Clap Push-ups (3 sets × 8 reps)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 51-60: Mobility & Flexibility</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 40 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Dynamic stretching and mobility work to improve range of motion and reduce muscle tension. Includes yoga-inspired movements and foam rolling techniques.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Dynamic Warm-up</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Arm Circles (2 sets × 10 reps each direction)</li>
+                                <li>Leg Swings (2 sets × 10 reps each leg)</li>
+                                <li>World's Greatest Stretch (2 sets × 8 reps each side)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Yoga Flow</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Sun Salutations (3 rounds)</li>
+                                <li>Warrior Sequence (2 sets each side)</li>
+                                <li>Balance Poses (2 sets × 30s each)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Recovery</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Foam Rolling (2 minutes each muscle group)</li>
+                                <li>Static Stretching (30s each pose)</li>
+                                <li>Breathing Exercises (5 minutes)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 61-70: Endurance Building</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 50 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Long-duration cardio sessions combined with circuit training to build stamina and endurance. Progressive intensity increases to challenge your limits.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Cardio Base</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Steady-State Running (20 minutes)</li>
+                                <li>Cycling Intervals (15 minutes)</li>
+                                <li>Rowing Machine (10 minutes)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Circuit Training</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Burpee Box Jumps (3 sets × 12 reps)</li>
+                                <li>Battle Ropes (3 sets × 30s)</li>
+                                <li>Kettlebell Circuits (3 rounds)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Endurance Finisher</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Farmer's Walk (3 sets × 1 minute)</li>
+                                <li>Sled Push/Pull (3 sets × 20m)</li>
+                                <li>Sandbag Carries (3 sets × 30m)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 71-80: Advanced Strength</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 55 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Complex compound movements and advanced lifting techniques. Focus on building maximum strength and muscle mass with proper form and progressive overload.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Compound Lifts</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Deadlifts (5 sets × 5 reps)</li>
+                                <li>Bench Press (5 sets × 5 reps)</li>
+                                <li>Squats (5 sets × 5 reps)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Advanced Variations</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Deficit Deadlifts (4 sets × 4 reps)</li>
+                                <li>Pause Squats (4 sets × 4 reps)</li>
+                                <li>Close-Grip Bench (4 sets × 6 reps)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Accessory Work</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Pull-ups (4 sets × max reps)</li>
+                                <li>Dips (4 sets × max reps)</li>
+                                <li>Core Circuit (3 rounds)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 81-90: Athletic Performance</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 45 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Sport-specific training incorporating agility drills, speed work, and functional movements. Improve overall athletic performance and coordination.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Agility Drills</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Cone Drills (4 sets × 6 patterns)</li>
+                                <li>Ladder Drills (4 sets × 4 patterns)</li>
+                                <li>Shuttle Runs (4 sets × 4 sprints)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Speed Work</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Sprint Intervals (6 sets × 40m)</li>
+                                <li>Resisted Sprints (4 sets × 20m)</li>
+                                <li>Hill Sprints (4 sets × 30m)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Sport Skills</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Medicine Ball Throws (3 sets × 8 reps)</li>
+                                <li>Reaction Drills (3 sets × 10 reps)</li>
+                                <li>Multi-Directional Jumps (3 sets × 8 reps)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    <section class="workout-section">
+        <div class="container">
+            <h3 class="workout-title">Day 91-100: Peak Performance</h3>
+            <div class="workout-meta">
+                <span>Scheduled</span>
+                <span class="video">F: Video</span>
+                <button class="complete-button">Mark As Complete</button>
+                <span class="workout-duration">Duration: 60 minutes</span>
+            </div>
+            <div class="workout-instructions">
+                <p>Instructions</p>
+                <p>Final phase combining all aspects of training. High-intensity workouts designed to push your limits and achieve peak physical performance.</p>
+                <div class="exercise-details" style="display: none;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">Daily Exercise Sets:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 1: Strength Complex</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Clean & Jerk (4 sets × 3 reps)</li>
+                                <li>Snatch (4 sets × 3 reps)</li>
+                                <li>Front Squat (4 sets × 5 reps)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 2: Power Endurance</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Box Jump Burpees (4 sets × 10 reps)</li>
+                                <li>Kettlebell Complex (4 sets × 12 reps)</li>
+                                <li>Plyometric Circuit (4 rounds)</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <strong style="color: #2ecc71;">Set 3: Final Challenge</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>100-Day Challenge Finisher (1 round)</li>
+                                <li>Core Complex (3 rounds)</li>
+                                <li>Mobility Flow (10 minutes)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="see-more" onclick="toggleExercises(this); return false;">See more</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Diet Section -->
+    <section class="diet-section" style="background: linear-gradient(145deg, #1a1f25 0%, #2c3e50 100%); margin: 30px auto; padding: 35px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); max-width: 800px; position: relative; overflow: hidden; transition: all 0.3s ease;">
+        <div class="container">
+            <h3 class="diet-title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #ecf0f1; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-bottom: 10px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+                Personalized Nutrition Guide
+                <span style="position: absolute; bottom: 0; left: 0; width: 50px; height: 3px; background: linear-gradient(to right, #3498db, #2ecc71); border-radius: 2px; transition: width 0.3s ease;"></span>
+            </h3>
+            
+            <div class="weight-input" style="margin-bottom: 30px;">
+                <input type="number" id="userWeight" placeholder="Enter your weight (kg)" style="width: 100%; padding: 15px 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #ecf0f1; font-size: 15px; transition: all 0.3s ease; margin-bottom: 15px;">
+                <button onclick="calculateDiet()" style="background: linear-gradient(145deg, #3498db, #2980b9); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; font-size: 15px; width: 100%;">Calculate Diet Plan</button>
+            </div>
+
+            <div id="dietResults" style="display: none;">
+                <div class="diet-category" style="margin-bottom: 30px; padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 10px; transition: all 0.3s ease;">
+                    <h4 style="color: #3498db; margin-bottom: 15px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Daily Caloric Needs</h4>
+                    <p id="calorieNeeds" style="color: #ecf0f1; line-height: 1.6; margin-bottom: 15px;"></p>
+                </div>
+
+                <div class="diet-category" style="margin-bottom: 30px; padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 10px; transition: all 0.3s ease;">
+                    <h4 style="color: #3498db; margin-bottom: 15px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Macronutrient Breakdown</h4>
+                    <div id="macroBreakdown" style="color: #ecf0f1; line-height: 1.6;"></div>
+                </div>
+
+                <div class="diet-category" style="margin-bottom: 30px; padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 10px; transition: all 0.3s ease;">
+                    <h4 style="color: #3498db; margin-bottom: 15px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Recommended Meal Plan</h4>
+                    <div id="mealPlan" style="color: #ecf0f1; line-height: 1.6;"></div>
+                </div>
+
+                <div class="diet-category" style="margin-bottom: 30px; padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 10px; transition: all 0.3s ease;">
+                    <h4 style="color: #3498db; margin-bottom: 15px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;">Nutrition Tips</h4>
+                    <ul id="nutritionTips" style="color: #ecf0f1; line-height: 1.6; padding-left: 20px;"></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%); color: white; padding: 100px 0 40px; margin-top: 50px; position: relative; overflow: hidden;">
+        <!-- Decorative elements -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(to right, #3498db, #2ecc71, #3498db);"></div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 150%, rgba(52, 152, 219, 0.1) 0%, transparent 50%);"></div>
+        <div style="position: absolute; bottom: 0; right: 0; width: 100%; height: 100%; background: radial-gradient(circle at 80% -50%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);"></div>
+        
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 50px; margin-bottom: 60px;">
+                <div>
+                    <h4 style="color: #3498db; margin-bottom: 30px; font-size: 22px; position: relative; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">
+                        About fit_8x
+                        <span style="position: absolute; bottom: -8px; left: 0; width: 40px; height: 3px; background: linear-gradient(to right, #3498db, #2ecc71); border-radius: 2px;"></span>
+                    </h4>
+                    <p style="color: #bdc3c7; line-height: 1.8; margin-bottom: 30px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Empowering fitness professionals with cutting-edge tools to transform their clients' lives through personalized training and nutrition guidance.</p>
+                    <div style="display: flex; gap: 25px;">
+                        <a href="#" style="color: #bdc3c7; text-decoration: none; font-size: 26px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; transform: translateY(0); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" onmouseover="this.style.color='#3498db'; this.style.transform='translateY(-5px) rotate(5deg)';" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateY(0) rotate(0)';" title="Facebook">📱</a>
+                        <a href="#" style="color: #bdc3c7; text-decoration: none; font-size: 26px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; transform: translateY(0); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" onmouseover="this.style.color='#3498db'; this.style.transform='translateY(-5px) rotate(5deg)';" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateY(0) rotate(0)';" title="LinkedIn">📘</a>
+                        <a href="#" style="color: #bdc3c7; text-decoration: none; font-size: 26px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; transform: translateY(0); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" onmouseover="this.style.color='#3498db'; this.style.transform='translateY(-5px) rotate(5deg)';" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateY(0) rotate(0)';" title="Instagram">📸</a>
+                        <a href="#" style="color: #bdc3c7; text-decoration: none; font-size: 26px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; transform: translateY(0); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" onmouseover="this.style.color='#3498db'; this.style.transform='translateY(-5px) rotate(5deg)';" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateY(0) rotate(0)';" title="Twitter">🐦</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: #3498db; margin-bottom: 30px; font-size: 22px; position: relative; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">
+                        Quick Links
+                        <span style="position: absolute; bottom: -8px; left: 0; width: 40px; height: 3px; background: linear-gradient(to right, #3498db, #2ecc71); border-radius: 2px;"></span>
+                    </h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                Home
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                Features
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                Pricing
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                Testimonials
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #3498db; margin-bottom: 30px; font-size: 22px; position: relative; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">
+                        Resources
+                        <span style="position: absolute; bottom: -8px; left: 0; width: 40px; height: 3px; background: linear-gradient(to right, #3498db, #2ecc71); border-radius: 2px;"></span>
+                    </h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                Blog
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                Help Center
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                API Documentation
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 18px;">
+                            <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; display: inline-block; position: relative; padding-left: 25px; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);" onmouseover="this.style.color='#3498db'; this.style.paddingLeft='30px'; this.style.transform='translateX(5px)';" onmouseout="this.style.color='#bdc3c7'; this.style.paddingLeft='25px'; this.style.transform='translateX(0)';">
+                                <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: all 0.3s ease;">→</span>
+                                Community
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #3498db; margin-bottom: 30px; font-size: 22px; position: relative; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">
+                        Contact Us
+                        <span style="position: absolute; bottom: -8px; left: 0; width: 40px; height: 3px; background: linear-gradient(to right, #3498db, #2ecc71); border-radius: 2px;"></span>
+                    </h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 25px; color: #bdc3c7; display: flex; align-items: center; gap: 15px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.03);" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(8px)'; this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'; this.style.background='rgba(255,255,255,0.03)';">
+                            <span style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">📧</span>
+                            <span style="font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">support@fit8x.com</span>
+                        </li>
+                        <li style="margin-bottom: 25px; color: #bdc3c7; display: flex; align-items: center; gap: 15px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.03);" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(8px)'; this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'; this.style.background='rgba(255,255,255,0.03)';">
+                            <span style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">📞</span>
+                            <span style="font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">1-800-FIT-8X</span>
+                        </li>
+                        <li style="margin-bottom: 25px; color: #bdc3c7; display: flex; align-items: center; gap: 15px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.03);" onmouseover="this.style.color='#3498db'; this.style.transform='translateX(8px)'; this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#bdc3c7'; this.style.transform='translateX(0)'; this.style.background='rgba(255,255,255,0.03)';">
+                            <span style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">📍</span>
+                            <span style="font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">123 Fitness Street, Gym City</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(189, 195, 199, 0.1); text-align: center; position: relative;">
+                <div style="position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 100px; height: 2px; background: linear-gradient(to right, transparent, rgba(52, 152, 219, 0.3), transparent);"></div>
+                <p style="color: #bdc3c7; font-size: 14px; letter-spacing: 0.8px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                    © 2024 fit_8x. All rights reserved. | 
+                    <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; position: relative;" onmouseover="this.style.color='#3498db';" onmouseout="this.style.color='#bdc3c7';">Privacy Policy</a> | 
+                    <a href="#" style="color: #bdc3c7; text-decoration: none; transition: all 0.3s ease; position: relative;" onmouseover="this.style.color='#3498db';" onmouseout="this.style.color='#bdc3c7';">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function toggleExercises(element) {
+            const exerciseDetails = element.previousElementSibling;
+            if (exerciseDetails.style.display === 'none') {
+                exerciseDetails.style.display = 'block';
+                element.textContent = 'See less';
+            } else {
+                exerciseDetails.style.display = 'none';
+                element.textContent = 'See more';
+            }
+        }
+    </script>
+
+    <!-- Add Modal HTML -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <form class="signup-form" id="signupForm">
+                <h2>Create Your Account</h2>
+                <p>Join fit_8x and start transforming your fitness journey today</p>
+                
+                <div class="form-group">
+                    <input type="text" placeholder="Full Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" placeholder="Password" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" placeholder="Confirm Password" required>
+                </div>
+                
+                <button type="submit">Create Account</button>
+                
+                <p class="terms">By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ... existing code ...
+
+        // Add Modal JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('signupModal');
+            const ctaButtons = document.querySelectorAll('.cta-button, .email-form button');
+            const closeModal = document.querySelector('.close-modal');
+            const signupForm = document.getElementById('signupForm');
+
+            // Open modal when clicking CTA buttons
+            ctaButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // Close modal when clicking close button
+            closeModal.addEventListener('click', function() {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Handle form submission
+            signupForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                // Add your form submission logic here
+                alert('Thank you for signing up! We will contact you shortly.');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+    </script>
+
+    <script>
+    // ... existing code ...
+
+    // Add Diet Calculation JavaScript
+    function calculateDiet() {
+        const weight = parseFloat(document.getElementById('userWeight').value);
+        if (!weight || weight <= 0) {
+            alert('Please enter a valid weight');
+            return;
+        }
+
+        // Calculate BMR using Mifflin-St Jeor Equation
+        const bmr = 10 * weight + 625; // Simplified for demonstration
+        const maintenanceCalories = bmr * 1.2; // Sedentary activity factor
+        const targetCalories = maintenanceCalories - 500; // For weight loss
+
+        // Display results
+        document.getElementById('dietResults').style.display = 'block';
+        document.getElementById('calorieNeeds').innerHTML = `
+            Based on your weight of ${weight}kg, your daily caloric needs are:<br>
+            Maintenance: ${Math.round(maintenanceCalories)} calories<br>
+            Weight Loss: ${Math.round(targetCalories)} calories
+        `;
+
+        // Calculate macronutrients
+        const protein = weight * 2.2; // 2.2g per kg
+        const fat = (targetCalories * 0.25) / 9; // 25% of calories from fat
+        const carbs = (targetCalories - (protein * 4 + fat * 9)) / 4; // Remaining calories from carbs
+
+        document.getElementById('macroBreakdown').innerHTML = `
+            Daily macronutrient targets:<br>
+            Protein: ${Math.round(protein)}g<br>
+            Carbohydrates: ${Math.round(carbs)}g<br>
+            Fat: ${Math.round(fat)}g
+        `;
+
+        // Generate meal plan
+        document.getElementById('mealPlan').innerHTML = `
+            <strong>Breakfast (${Math.round(targetCalories * 0.25)} calories):</strong><br>
+            • Oatmeal with protein powder and berries<br>
+            • Greek yogurt with nuts and honey<br>
+            • 2 whole eggs with spinach<br><br>
+            <strong>Lunch (${Math.round(targetCalories * 0.35)} calories):</strong><br>
+            • Grilled chicken breast with quinoa<br>
+            • Mixed vegetables with olive oil<br>
+            • Sweet potato<br><br>
+            <strong>Dinner (${Math.round(targetCalories * 0.35)} calories):</strong><br>
+            • Salmon or lean meat<br>
+            • Brown rice or quinoa<br>
+            • Steamed vegetables<br><br>
+            <strong>Snacks (${Math.round(targetCalories * 0.05)} calories):</strong><br>
+            • Protein shake<br>
+            • Mixed nuts<br>
+            • Fresh fruits
+        `;
+
+        // Add nutrition tips
+        document.getElementById('nutritionTips').innerHTML = `
+            <li>Stay hydrated - aim for ${Math.round(weight * 0.033)} liters of water daily</li>
+            <li>Eat protein with every meal to maintain muscle mass</li>
+            <li>Include fiber-rich foods to stay full longer</li>
+            <li>Plan meals ahead to avoid unhealthy choices</li>
+            <li>Track your food intake using our nutrition app</li>
+        `;
+    }
+    </script>
+
+    <script>
+    // ... existing code ...
+
+    // Add Set Timer Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const exerciseSets = document.querySelectorAll('.exercise-set');
+        
+        exerciseSets.forEach(set => {
+            const timerDisplay = set.querySelector('.set-timer-display');
+            const startButton = set.querySelector('.set-timer-button.start');
+            const stopButton = set.querySelector('.set-timer-button.stop');
+            const resetButton = set.querySelector('.set-timer-button.reset');
+            
+            let timer;
+            let seconds = 0;
+            let isRunning = false;
+            
+            function updateDisplay() {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                
+                timerDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+            
+            function startTimer() {
+                if (!isRunning) {
+                    isRunning = true;
+                    timer = setInterval(() => {
+                        seconds++;
+                        updateDisplay();
+                    }, 1000);
+                    
+                    startButton.style.display = 'none';
+                    stopButton.style.display = 'inline-block';
+                }
+            }
+            
+            function stopTimer() {
+                if (isRunning) {
+                    isRunning = false;
+                    clearInterval(timer);
+                    
+                    startButton.style.display = 'inline-block';
+                    stopButton.style.display = 'none';
+                }
+            }
+            
+            function resetTimer() {
+                stopTimer();
+                seconds = 0;
+                updateDisplay();
+                
+                startButton.style.display = 'inline-block';
+                stopButton.style.display = 'none';
+            }
+            
+            startButton.addEventListener('click', startTimer);
+            stopButton.addEventListener('click', stopTimer);
+            resetButton.addEventListener('click', resetTimer);
+        });
+    });
+    </script>
+
+    <!-- Floating Timer Panel -->
+    <div class="floating-timer-panel" id="floatingTimer">
+        <div class="floating-timer-header">
+            <div class="floating-timer-title">Workout Timer</div>
+            <button class="floating-timer-minimize" id="minimizeTimer">−</button>
+        </div>
+        <div class="floating-timer-display" id="floatingTimerDisplay">00:00:00</div>
+        <div class="floating-timer-controls">
+            <button class="floating-timer-button start" id="floatingTimerStart">Start</button>
+            <button class="floating-timer-button stop" id="floatingTimerStop" style="display: none;">Stop</button>
+            <button class="floating-timer-button reset" id="floatingTimerReset">Reset</button>
+        </div>
+    </div>
+
+    <script>
+    // ... existing scripts ...
+    
+    // Floating Timer Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const floatingTimer = document.getElementById('floatingTimer');
+        const floatingTimerDisplay = document.getElementById('floatingTimerDisplay');
+        const floatingTimerStart = document.getElementById('floatingTimerStart');
+        const floatingTimerStop = document.getElementById('floatingTimerStop');
+        const floatingTimerReset = document.getElementById('floatingTimerReset');
+        const minimizeTimer = document.getElementById('minimizeTimer');
+        
+        let floatingTimerInterval;
+        let floatingTimerSeconds = 0;
+        let isFloatingTimerRunning = false;
+        
+        function updateFloatingTimerDisplay() {
+            const hours = Math.floor(floatingTimerSeconds / 3600);
+            const minutes = Math.floor((floatingTimerSeconds % 3600) / 60);
+            const seconds = floatingTimerSeconds % 60;
+            
+            floatingTimerDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+        
+        function startFloatingTimer() {
+            if (!isFloatingTimerRunning) {
+                isFloatingTimerRunning = true;
+                floatingTimerInterval = setInterval(() => {
+                    floatingTimerSeconds++;
+                    updateFloatingTimerDisplay();
+                }, 1000);
+                
+                floatingTimerStart.style.display = 'none';
+                floatingTimerStop.style.display = 'inline-block';
+            }
+        }
+        
+        function stopFloatingTimer() {
+            if (isFloatingTimerRunning) {
+                isFloatingTimerRunning = false;
+                clearInterval(floatingTimerInterval);
+                
+                floatingTimerStart.style.display = 'inline-block';
+                floatingTimerStop.style.display = 'none';
+            }
+        }
+        
+        function resetFloatingTimer() {
+            stopFloatingTimer();
+            floatingTimerSeconds = 0;
+            updateFloatingTimerDisplay();
+            
+            floatingTimerStart.style.display = 'inline-block';
+            floatingTimerStop.style.display = 'none';
+        }
+        
+        function toggleMinimizeTimer() {
+            floatingTimer.classList.toggle('floating-timer-minimized');
+            
+            if (floatingTimer.classList.contains('floating-timer-minimized')) {
+                minimizeTimer.textContent = '+';
+            } else {
+                minimizeTimer.textContent = '−';
+            }
+        }
+        
+        floatingTimerStart.addEventListener('click', startFloatingTimer);
+        floatingTimerStop.addEventListener('click', stopFloatingTimer);
+        floatingTimerReset.addEventListener('click', resetFloatingTimer);
+        minimizeTimer.addEventListener('click', toggleMinimizeTimer);
+        
+        // Make the timer draggable
+        let isDragging = false;
+        let offsetX, offsetY;
+        
+        floatingTimer.addEventListener('mousedown', function(e) {
+            if (e.target === floatingTimer || e.target.classList.contains('floating-timer-header') || e.target.classList.contains('floating-timer-title')) {
+                isDragging = true;
+                offsetX = e.clientX - floatingTimer.getBoundingClientRect().left;
+                offsetY = e.clientY - floatingTimer.getBoundingClientRect().top;
+            }
+        });
+        
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                        e.preventDefault();
+                floatingTimer.style.left = (e.clientX - offsetX) + 'px';
+                floatingTimer.style.top = (e.clientY - offsetY) + 'px';
+                floatingTimer.style.right = 'auto';
+                floatingTimer.style.bottom = 'auto';
+            }
+        });
+        
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+    });
+    </script>
+
+    <!-- Workout Builder Modal -->
+    <div id="workoutBuilderModal" class="modal">
+        <div class="modal-content workout-builder-modal">
+            <span class="close-modal">&times;</span>
+            <h2>Custom Workout Builder</h2>
+            <div class="workout-builder-container">
+                <div class="workout-builder-sidebar">
+                    <h3>Exercise Library</h3>
+                    <div class="exercise-categories">
+                        <button class="category-btn active" data-category="all">All Exercises</button>
+                        <button class="category-btn" data-category="strength">Strength</button>
+                        <button class="category-btn" data-category="cardio">Cardio</button>
+                        <button class="category-btn" data-category="flexibility">Flexibility</button>
+                        <button class="category-btn" data-category="core">Core</button>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="exerciseSearch" placeholder="Search exercises...">
+                    </div>
+                    <div class="exercise-list" id="exerciseList">
+                        <!-- Exercise items will be populated here -->
+                    </div>
+                </div>
+                <div class="workout-builder-main">
+                    <div class="workout-details">
+                        <input type="text" id="workoutName" placeholder="Workout Name" class="workout-name-input">
+                        <div class="workout-meta-inputs">
+                            <select id="workoutDifficulty">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                            <select id="workoutDuration">
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="45">45 minutes</option>
+                                <option value="60">60 minutes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="workout-sets-container">
+                        <h3>Workout Sets</h3>
+                        <div id="workoutSets">
+                            <!-- Workout sets will be added here -->
+                        </div>
+                        <button id="addSetBtn" class="add-set-btn">Add New Set</button>
+                    </div>
+                    <div class="workout-actions">
+                        <button id="saveWorkoutBtn" class="save-workout-btn">Save Workout</button>
+                        <button id="exportWorkoutBtn" class="export-workout-btn">Export Workout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ... existing scripts ...
+
+    // Workout Builder Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const workoutBuilderBtn = document.getElementById('workoutBuilderBtn');
+        const workoutBuilderModal = document.getElementById('workoutBuilderModal');
+        const closeBtn = workoutBuilderModal.querySelector('.close-modal');
+        const exerciseList = document.getElementById('exerciseList');
+        const workoutSets = document.getElementById('workoutSets');
+        const addSetBtn = document.getElementById('addSetBtn');
+        const saveWorkoutBtn = document.getElementById('saveWorkoutBtn');
+        const exportWorkoutBtn = document.getElementById('exportWorkoutBtn');
+        const exerciseSearch = document.getElementById('exerciseSearch');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        
+        // Sample exercise data
+        const exercises = [
+            { id: 1, name: 'Push-ups', category: 'strength', description: 'Bodyweight exercise for chest, shoulders, and triceps' },
+            { id: 2, name: 'Squats', category: 'strength', description: 'Lower body compound exercise' },
+            { id: 3, name: 'Plank', category: 'core', description: 'Isometric core exercise' },
+            { id: 4, name: 'Burpees', category: 'cardio', description: 'Full body explosive movement' },
+            { id: 5, name: 'Mountain Climbers', category: 'cardio', description: 'Dynamic core and cardio exercise' },
+            { id: 6, name: 'Lunges', category: 'strength', description: 'Lower body unilateral exercise' },
+            { id: 7, name: 'Dead Bug', category: 'core', description: 'Core stability exercise' },
+            { id: 8, name: 'Jump Rope', category: 'cardio', description: 'Cardio exercise for coordination and endurance' },
+            { id: 9, name: 'Shoulder Press', category: 'strength', description: 'Upper body pushing movement' },
+            { id: 10, name: 'Russian Twists', category: 'core', description: 'Rotational core exercise' },
+            { id: 11, name: 'High Knees', category: 'cardio', description: 'Running in place with high knees' },
+            { id: 12, name: 'Child\'s Pose', category: 'flexibility', description: 'Restorative yoga pose' },
+            { id: 13, name: 'Downward Dog', category: 'flexibility', description: 'Yoga pose for full body stretch' },
+            { id: 14, name: 'Cobra Stretch', category: 'flexibility', description: 'Back extension stretch' },
+            { id: 15, name: 'Bicycle Crunches', category: 'core', description: 'Dynamic core exercise' }
+        ];
+        
+        // Open modal
+        workoutBuilderBtn.addEventListener('click', function() {
+            workoutBuilderModal.classList.add('active');
+            populateExerciseList('all');
+        });
+        
+        // Close modal
+        closeBtn.addEventListener('click', function() {
+            workoutBuilderModal.classList.remove('active');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === workoutBuilderModal) {
+                workoutBuilderModal.classList.remove('active');
+            }
+        });
+        
+        // Category filtering
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                populateExerciseList(this.dataset.category);
+            });
+        });
+        
+        // Search functionality
+        exerciseSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const filteredExercises = exercises.filter(exercise => 
+                exercise.name.toLowerCase().includes(searchTerm) || 
+                exercise.description.toLowerCase().includes(searchTerm)
+            );
+            renderExercises(filteredExercises);
+        });
+        
+        // Populate exercise list
+        function populateExerciseList(category) {
+            let filteredExercises = exercises;
+            if (category !== 'all') {
+                filteredExercises = exercises.filter(exercise => exercise.category === category);
+            }
+            renderExercises(filteredExercises);
+        }
+        
+        // Render exercises
+        function renderExercises(exercisesToRender) {
+            exerciseList.innerHTML = '';
+            exercisesToRender.forEach(exercise => {
+                const exerciseItem = document.createElement('div');
+                exerciseItem.className = 'exercise-item';
+                exerciseItem.innerHTML = `
+                    <h4>${exercise.name}</h4>
+                    <p>${exercise.description}</p>
+                `;
+                exerciseItem.addEventListener('click', function() {
+                    addExerciseToSet(exercise);
+                });
+                exerciseList.appendChild(exerciseItem);
+            });
+        }
+        
+        // Add new set
+        addSetBtn.addEventListener('click', function() {
+            const setNumber = workoutSets.children.length + 1;
+            const newSet = document.createElement('div');
+            newSet.className = 'workout-set';
+            newSet.innerHTML = `
+                <div class="set-header">
+                    <div class="set-title">Set ${setNumber}</div>
+                    <div class="set-actions">
+                        <button class="set-action-btn move-up">↑</button>
+                        <button class="set-action-btn move-down">↓</button>
+                        <button class="set-action-btn remove-set">×</button>
+                    </div>
+                </div>
+                <div class="exercises-container"></div>
+                <button class="add-exercise-btn">Add Exercise</button>
+            `;
+            
+            // Add exercise button functionality
+            const addExerciseBtn = newSet.querySelector('.add-exercise-btn');
+            addExerciseBtn.addEventListener('click', function() {
+                // Show exercise selection UI
+                const exerciseSelection = document.createElement('div');
+                exerciseSelection.className = 'exercise-selection';
+                exerciseSelection.innerHTML = `
+                    <div class="exercise-selection-header">
+                        <h4>Select Exercise</h4>
+                        <button class="close-selection">×</button>
+                    </div>
+                    <div class="exercise-selection-list">
+                        ${exercises.map(exercise => `
+                            <div class="exercise-selection-item" data-id="${exercise.id}">
+                                <h4>${exercise.name}</h4>
+                                <p>${exercise.description}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                newSet.appendChild(exerciseSelection);
+                
+                // Close selection UI
+                const closeSelectionBtn = exerciseSelection.querySelector('.close-selection');
+                closeSelectionBtn.addEventListener('click', function() {
+                    exerciseSelection.remove();
+                });
+                
+                // Select exercise
+                const exerciseItems = exerciseSelection.querySelectorAll('.exercise-selection-item');
+                exerciseItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const exerciseId = parseInt(this.dataset.id);
+                        const selectedExercise = exercises.find(e => e.id === exerciseId);
+                        addExerciseToSet(selectedExercise, newSet);
+                        exerciseSelection.remove();
+                    });
+                });
+            });
+            
+            // Remove set
+            const removeSetBtn = newSet.querySelector('.remove-set');
+            removeSetBtn.addEventListener('click', function() {
+                newSet.remove();
+                updateSetNumbers();
+            });
+            
+            // Move set up
+            const moveUpBtn = newSet.querySelector('.move-up');
+            moveUpBtn.addEventListener('click', function() {
+                if (newSet.previousElementSibling) {
+                    workoutSets.insertBefore(newSet, newSet.previousElementSibling);
+                    updateSetNumbers();
+                }
+            });
+            
+            // Move set down
+            const moveDownBtn = newSet.querySelector('.move-down');
+            moveDownBtn.addEventListener('click', function() {
+                if (newSet.nextElementSibling) {
+                    workoutSets.insertBefore(newSet.nextElementSibling, newSet);
+                    updateSetNumbers();
+                }
+            });
+            
+            workoutSets.appendChild(newSet);
+        });
+        
+        // Add exercise to set
+        function addExerciseToSet(exercise, setElement = null) {
+            if (!setElement) {
+                // If no set is specified, add to the last set or create a new one
+                if (workoutSets.children.length === 0) {
+                    addSetBtn.click();
+                    setElement = workoutSets.lastElementChild;
+                } else {
+                    setElement = workoutSets.lastElementChild;
+                }
+            }
+            
+            const exercisesContainer = setElement.querySelector('.exercises-container');
+            const exerciseRow = document.createElement('div');
+            exerciseRow.className = 'exercise-row';
+            exerciseRow.innerHTML = `
+                <div class="exercise-details">
+                    <div class="exercise-name">${exercise.name}</div>
+                    <div class="exercise-params">
+                        <div class="exercise-param">
+                            <label>Sets:</label>
+                            <input type="number" value="3" min="1" max="10">
+                        </div>
+                        <div class="exercise-param">
+                            <label>Reps:</label>
+                            <input type="number" value="10" min="1" max="100">
+                        </div>
+                        <div class="exercise-param">
+                            <label>Rest (s):</label>
+                            <input type="number" value="60" min="0" max="300">
+                        </div>
+                    </div>
+                </div>
+                <button class="remove-exercise-btn">×</button>
+            `;
+            
+            // Remove exercise
+            const removeExerciseBtn = exerciseRow.querySelector('.remove-exercise-btn');
+            removeExerciseBtn.addEventListener('click', function() {
+                exerciseRow.remove();
+            });
+            
+            exercisesContainer.appendChild(exerciseRow);
+        }
+        
+        // Update set numbers
+        function updateSetNumbers() {
+            const sets = workoutSets.querySelectorAll('.workout-set');
+            sets.forEach((set, index) => {
+                set.querySelector('.set-title').textContent = `Set ${index + 1}`;
+            });
+        }
+        
+        // Save workout
+        saveWorkoutBtn.addEventListener('click', function() {
+            const workoutName = document.getElementById('workoutName').value || 'My Custom Workout';
+            const workoutDifficulty = document.getElementById('workoutDifficulty').value;
+            const workoutDuration = document.getElementById('workoutDuration').value;
+            
+            const sets = [];
+            const setElements = workoutSets.querySelectorAll('.workout-set');
+            
+            setElements.forEach(setElement => {
+                const exercises = [];
+                const exerciseElements = setElement.querySelectorAll('.exercise-row');
+                
+                exerciseElements.forEach(exerciseElement => {
+                    const exerciseName = exerciseElement.querySelector('.exercise-name').textContent;
+                    const inputs = exerciseElement.querySelectorAll('input');
+                    const sets = parseInt(inputs[0].value);
+                    const reps = parseInt(inputs[1].value);
+                    const rest = parseInt(inputs[2].value);
+                    
+                    exercises.push({
+                        name: exerciseName,
+                        sets: sets,
+                        reps: reps,
+                        rest: rest
+                    });
+                });
+                
+                sets.push({
+                    exercises: exercises
+                });
+            });
+            
+            const workout = {
+                name: workoutName,
+                difficulty: workoutDifficulty,
+                duration: workoutDuration,
+                sets: sets
+            };
+            
+            // Save to localStorage
+            const savedWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '[]');
+            savedWorkouts.push(workout);
+            localStorage.setItem('customWorkouts', JSON.stringify(savedWorkouts));
+            
+            alert('Workout saved successfully!');
+        });
+        
+        // Export workout
+        exportWorkoutBtn.addEventListener('click', function() {
+            const workoutName = document.getElementById('workoutName').value || 'My Custom Workout';
+            const workoutDifficulty = document.getElementById('workoutDifficulty').value;
+            const workoutDuration = document.getElementById('workoutDuration').value;
+            
+            const sets = [];
+            const setElements = workoutSets.querySelectorAll('.workout-set');
+            
+            setElements.forEach(setElement => {
+                const exercises = [];
+                const exerciseElements = setElement.querySelectorAll('.exercise-row');
+                
+                exerciseElements.forEach(exerciseElement => {
+                    const exerciseName = exerciseElement.querySelector('.exercise-name').textContent;
+                    const inputs = exerciseElement.querySelectorAll('input');
+                    const sets = parseInt(inputs[0].value);
+                    const reps = parseInt(inputs[1].value);
+                    const rest = parseInt(inputs[2].value);
+                    
+                    exercises.push({
+                        name: exerciseName,
+                        sets: sets,
+                        reps: reps,
+                        rest: rest
+                    });
+                });
+                
+                sets.push({
+                    exercises: exercises
+                });
+            });
+            
+            const workout = {
+                name: workoutName,
+                difficulty: workoutDifficulty,
+                duration: workoutDuration,
+                sets: sets
+            };
+            
+            // Create a downloadable JSON file
+            const dataStr = JSON.stringify(workout, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = workoutName.replace(/\s+/g, '_') + '.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            });
+        });
+    </script>
+</body>
+</html>
